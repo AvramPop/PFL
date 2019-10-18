@@ -17,7 +17,6 @@ to_set([H | T], [H | Rez]) :- to_set(T, Rez), not(is_member(H, Rez)), !.
 to_set([_ | T], Rez) :- to_set(T, Rez).
 
 /*
-some comment
 transform(A, C) :- to_set(A, B), revert(B, C).
 
 revert([], []).
