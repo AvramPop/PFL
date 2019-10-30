@@ -64,7 +64,7 @@ gcd(A, 0, A) :- !.
 gcd(A, B, C) :- R is A mod B, gcd(B, R, C).
 
 gcd_list([], 0).
-gcd_list([H | T], R) :- gcd_list(T, Current), gcd(Current, H, R). 
+gcd_list([H | T], R) :- gcd_list(T, Current), H1 is abs(H), gcd(Current, H1, R). 
 
 
 	
