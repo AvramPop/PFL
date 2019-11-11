@@ -76,17 +76,18 @@ merge_to_set([1, 2], [1, 2], Rez) => Rez = [1, 2]
 merge_to_set([1, 2, 2, 3, 4, 4, 5], [1, 2, 3, 8, 9], Rez) => Rez = [1, 2, 3, 4, 5, 8, 9]   
 
 */
-
+concat_lists([], [], []) :- !.
 concat_lists(A, [], A).
 concat_lists([], B, B).
 concat_lists([H | A], B, [H | C]) :- concat_lists(A, B, C).
 
-merge_lists(A, [], Temp, Rez) :- concat_lists(Temp, A, Rez).
-merge_lists([], B, Temp, Rez) :- concat_lists(Temp, B, Rez).
+merge_lists([], [], [], []) :- !.
+merge_lists(A, [], Temp, Rez) :- !, concat_lists(Temp, A, Rez).
+merge_lists([], B, Temp, Rez) :- !, concat_lists(Temp, B, Rez).
 merge_lists([H1 | A], [H2 | B], Temp, Rez) :- H1 < H2, !, concat_lists(Temp, [H1], Temp1), merge_lists(A, [H2 | B], Temp1, Rez).
 merge_lists(A, [H2 | B], Temp, Rez) :- concat_lists(Temp, [H2], Temp1), merge_lists(A, B, Temp1, Rez).
 
-is_member(E, [E | _]).
+is_member(E, [E | _]) :- !.
 is_member(E, [_ | T]) :- is_member(E, T).
 
 to_set([], Temp, Temp).
