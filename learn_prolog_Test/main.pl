@@ -36,11 +36,19 @@ comb(N, [X | T], C) :-
 /*
 %predictions(R) :- comb(4, R).*/
 
-
+/*
+o(o).
+o(o : integer)
+*/
 o(1).
 o(2).
 o(3). % 3 represents x
 
+
+/*
+comb(i, i, i, o).
+comb(N : integer, P : integer, Temp : list, Rez : list).
+*/
 comb(4, _, Temp, Temp) :- !.
 comb(N, P, Temp, Rez) :-
 					o(X), 
@@ -49,5 +57,28 @@ comb(N, P, Temp, Rez) :-
 					P1 mod 27 =\= 0,
 					comb(N1, P1, [X | Temp], Rez).
 
-predictions(R) :- comb(1, 1, [1], R).
-predictions(R) :- comb(1, 3, [3], R).
+/*
+predictionsAux(o)
+predictionsAux(R : list)
+*/
+predictionsAux(R) :- comb(1, 1, [1], R).
+predictionsAux(R) :- comb(1, 3, [3], R).
+
+/*
+predictions(o)
+predictions(R : list)
+*/
+predictions(RF) :- predictionsAux(R), formatX(R, RF).
+
+/*
+formatX(i, o)
+formatX(i: list, o: list)
+formatX(l1...ln) =
+	0, n = 0
+	'x' + formatX(l2..ln), l1 = 3
+	l1 + formatX(l2..ln), otherwise
+	
+*/
+formatX([], []) :- !.
+formatX([X | T], [x | Rez]) :- X == 3, !, formatX(T, Rez).
+formatX([X | T], [X | Rez]) :- formatX(T, Rez).
