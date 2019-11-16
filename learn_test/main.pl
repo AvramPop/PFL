@@ -21,16 +21,16 @@ belongs(E, [E | _]) :- !.
 belongs(E, [_ | T]) :- belongs(E, T).
 
 pairs(_, [], []) :- !.
-pairs(E, [H | List], [[E, H] | Rez]) :- pairs(E, List, Rez). 
+pairs(E, [H | List], [[E, H] | Rez]) :- pairs(E, List, Rez).
 
 pairsA([], []) :- !.
-pairsA([H | List], C) :- pairs(H, List, Temp), 
-					pairsA(List, Rez), 
+pairsA([H | List], C) :- pairs(H, List, Temp),
+					pairsA(List, Rez),
 					concat_lists(Temp, Rez, C).
 
 remove(_, _, [], Temp, Temp) :- !.
 remove(E, C, [H | L], Temp, Rez) :- H =:= E, C1 is C + 1, C1 < 4, !, remove(E, C1, L, Temp, Rez).
-%remove(E, C1, [H | L], [H | Rez]) :- H =:= E, remove(E, C, L, Rez), C1 is C + 1, C1 < 3, !. 
+%remove(E, C1, [H | L], [H | Rez]) :- H =:= E, remove(E, C, L, Rez), C1 is C + 1, C1 < 3, !.
 remove(E, C, [H | L], Temp, Rez) :- concat_lists(Temp, [H], R), remove(E, C, L, R, Rez).
 
 even_list([]).
@@ -57,7 +57,7 @@ list_length([_ | T], C) :- list_length(T, C1), C is C1 + 1.
 
 split(_, _, [], L, L, R, R) :- !.
 split(I, M, [H | List], L, LR, R, RR) :- I1 is I + 1, TM is M + 1, I < TM, !, concat_lists(L, [H], Temp), split(I1, M, List, Temp, LR, R, RR).
-split(I, M, [H | List], L, LR, R, RR) :- I1 is I + 1, concat_lists(R, [H], Temp), split(I1, M, List, L, LR, Temp, RR). 
+split(I, M, [H | List], L, LR, R, RR) :- I1 is I + 1, concat_lists(R, [H], Temp), split(I1, M, List, L, LR, Temp, RR).
 
 splitF([], [], []) :- !.
 splitF(List, L, R) :- list_length(List, Tm), M is Tm / 2, split(1, M, List, [], L, [], R).
@@ -66,20 +66,67 @@ sort_list([], []) :- !.
 sort_list([E], [E]) :- !.
 sort_list(List, Sorted) :-
 	splitF(List, L, R),
-	sort_list(L, TL), 
-	sort_list(R, TR), 
-	merge_lists(TL, TR, [], Sorted). 
-	
+	sort_list(L, TL),
+	sort_list(R, TR),
+	merge_lists(TL, TR, [], Sorted).
+
 prime(X) :- X < 2, !, fail.
 prime(2) :- !.
 prime(X) :- X mod 2 =:= 0, !, fail.
 prime(X) :- primeAux(X, 3).
 primeAux(X, D) :- H is X / 2, D >= H, !.
 primeAux(X, D) :- X mod D =:= 0, !, fail.
-primeAux(X, D) :- D1 is D + 2, primeAux(X, D1).			
+primeAux(X, D) :- D1 is D + 2, primeAux(X, D1).
 
 con([], Temp, Temp) :- !.
 con([E], Temp, Rez) :- concat_lists(Temp, [E], Rez), !.
 con([H1, H2 | List], Temp, Rez) :- H1 =:= H2 - 1, !, con([H2 | List], Temp, Rez).
 con([H1, H2 | List], Temp, Rez) :- concat_lists(Temp, [H1, H2], R), con(List, R, Rez).
-				 
+
+inverseA([], Temp, Temp) :- !.
+inverseA([H | List], Temp, Rez) :- inverseA(List, [H | Temp], Rez).
+
+inverse(L, R) :- inverseA(L, [], R).
+
+productAux([], _, C, Temp, Rez) :- C > 0,
+																		!,
+																		concat_lists(Temp, [C], Rez).
+productAux([], _, _, Temp, Temp) :- !.
+productAux([H | InversedNumber], D, C, Temp, Rez) :-
+																							Prod is H * D,
+																							ProdPlus is Prod + C,
+																							Remain is ProdPlus mod 10,
+																							NewC is ProdPlus // 10,
+																							concat_lists(Temp, [Remain], NewTemp),
+																							productAux(InversedNumber, D, NewC, NewTemp, Rez).
+
+product(N, D, Rez) :-
+								inverse(N, Temp),
+								productAux(Temp, D, 0, [], R),
+								inverse(R, Rez).
+
+%---
+successorAux([], C, Temp, Rez) :- C > 0,
+																		!,
+																		concat_lists(Temp, [C], Rez).
+successorAux([], _, Temp, Temp) :- !.
+successorAux([H | InversedNumber], C, Temp, Rez) :-
+																							SumPlus is H + C,
+																							Remain is SumPlus mod 10,
+																							NewC is SumPlus // 10,
+																							concat_lists(Temp, [Remain], NewTemp),
+																							successorAux(InversedNumber, NewC, NewTemp, Rez).
+
+successor(N, Rez) :-
+								inverse(N, Temp),
+								successorAux(Temp, 1, [], R),
+								inverse(R, Rez).
+
+
+rem([], []).
+rem([E], [E]).
+rem([H1, H2], [H1, H2]) :- H1 =\= H2.
+rem([H1, H2], []) :- H2 =:= H1 + 1.
+rem([H1, H2, H3 | T], R) :- H2 =:= H1 + 1, H3 =:= H2 + 1, rem([H2, H3 | T], R).
+rem([H1, H2, H3 | T], R) :- H2 =:= H1 + 1, H3 =\= H2 + 1, rem([H3 | T], R).
+rem([H1, H2, H3 | T], [H1 | R]) :- H2 =\= H1 + 1, rem([H2, H3 | T], R).
