@@ -94,23 +94,51 @@ listLength(list)
 )
 
 #|
-listOfFirstsForOddLength(l1..ln) =
-           [], n = 0 or l not list
-           l1[1] + listOfFirstsForOddLength(l2..ln), l1 is list and len(l1) is odd
-           listOfFirstsForOddLength(l2..ln), otherwise
-listOfFirstsForOddLength(list)
+listOfFirstsForOddLengthAux(l1..ln) =
+           nil, n = 0 or l not list
+           l1[1] + listOfFirstsForOddLengthAux(l2..ln), l1 is list and len(l1) is odd
+           listOfFirstsForOddLengthAux(l2..ln), otherwise
+listOfFirstsForOddLengthAux(list)
 
-(listOfFirstsForOddLength '(1 3 (4 5))) => ()
-(listOfFirstsForOddLength '(1 3 (4 5 1))) => (4)
-(listOfFirstsForOddLength '(1 2 (3 (4 5) (6 7)) 8 (9 10 11))) => (3 9).
+(listOfFirstsForOddLengthAux '(1 3 (4 5))) => ()
+(listOfFirstsForOddLengthAux '(1 3 (4 5 1))) => (4)
+(listOfFirstsForOddLengthAux '(1 2 (3 (4 5) (6 7)) 8 (9 10 11))) => (3 9).
 |#
-(defun listOfFirstsForOddLength(l)
+
+(defun listOfFirstsForOddLengthAux(l)
   (cond
     ((atom l) nil)
-    ((and (listp (car l)) (= (mod (listLength (car l)) 2) 1)) (cons (car (car l)) (listOfFirstsForOddLength(cdr l))))
-    (T (listOfFirstsForOddLength(cdr l)))
+    ((and (listp (car l)) (= (mod (listLength (car l)) 2) 1)) (cons (car (car l)) (listOfFirstsForOddLengthAux(cdr l))))
+    (T (listOfFirstsForOddLengthAux(cdr l)))
   )
 )
+
+#|
+listOfFirstsForOddLength(l1..ln) =
+           nil, n = 0 or l not list
+           l1 + listOfFirstsForOddLengthAux(l1..ln), l1..ln is list and len(l1..ln) is odd
+           listOfFirstsForOddLengthAux(l1..ln), otherwise
+listOfFirstsForOddLengthAux(list)
+
+(listOfFirstsForOddLengthAux '(1 3 (4 5))) => (1)
+(listOfFirstsForOddLengthAux '(1 3 (4 5 1))) => (1 4)
+(listOfFirstsForOddLengthAux '(1 2 (3 (4 5) (6 7)) 8 (9 10 11))) => (1 3 9).
+|#
+
+(defun listOfFirstsForOddLength(l)
+  (cond
+      ((and (listp l) (= (mod (listLength l) 2) 1)) (cons (car l) (listOfFirstsForOddLengthAux l)))
+      (T (listOfFirstsForOddLengthAux l))
+  )
+)
+#|
+(defun listOfFirstsForOddLengthAux(l)
+  (cond
+    ((atom l) nil)
+    ((and (listp (car l)) (= (mod (listLength (car l)) 2) 1)) (cons (listOfFirstsForOddLengthAux (car l)) (listOfFirstsForOddLengthAux(cdr l))))
+    (T (listOfFirstsForOddLengthAux(cdr l)))
+  )
+)|#
 
 
 ; d) Write a function to return the sum of all numerical atoms in a list at superficial level
